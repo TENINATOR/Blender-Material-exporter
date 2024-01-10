@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 
 public class BlenderMaterialImporter : MonoBehaviour
-{   
-    class BlenderMaterial_Importer: AssetPostprocessor
+{
+    class BlenderMaterial_Importer : AssetPostprocessor
     {
         [MenuItem("Blender/Import Materials")]
         private static void ImportMaterials()
@@ -62,14 +62,20 @@ public class BlenderMaterialImporter : MonoBehaviour
                     material.renderQueue = 3000; // Adjust render queue as needed
                 }
 
+                // Handle Subsurface scattering
+                if (materialData.sub_surface != null)
+                {
+                    material.SetFloat("_Subsurface", 0.5f); // Adjust the subsurface scattering intensity
+                    material.SetColor("_SubsurfaceColor", Color.white); // Adjust the subsurface scattering color
+                }
+
                 // Save the material instance as an asset
                 string materialPath = "Assets/Materials/" + material.name + ".mat"; // Adjust the materials directory
                 AssetDatabase.CreateAsset(material, materialPath);
             }
 
-                AssetDatabase.Refresh();
+            AssetDatabase.Refresh();
         }
-        
 
         [System.Serializable]
         private class MaterialList
@@ -88,15 +94,30 @@ public class BlenderMaterialImporter : MonoBehaviour
             // Optional properties
             public float[] emit;
             public bool use_transparency;
+            public float[] sub_surface;
 
             // Add other optional properties as needed
         }
-
 
         [MenuItem("Blender/Documentation")]
         private static void Documentation()
         {
             Debug.Log("Testing, testing, 1...2...3...!");
+        }
+
+        [MenuItem("Blender/Converter")]
+        private static void Converter()
+        {
+            MenuItem("Converter/Metal-ify")
+            {
+                Debug.Log("OOOO I'm metal")
+            }
+
+            MenuItem("Converter/Emit-ify")
+            {
+                Debug.Log("OOOO I'm light")
+
+            }
         }
     }
 }
